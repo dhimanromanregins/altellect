@@ -2,10 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
+from rest_framework.generics import ListAPIView
 from django.shortcuts import get_object_or_404
 
-from .models import JobOpening, JobDetail, ContactMessage
-from .serializers import JobOpeningSerializer, JobDetailSerializer,ContactMessageSerializer
+from .models import JobOpening, JobDetail, ContactMessage, Location, Department
+from .serializers import JobOpeningSerializer, JobDetailSerializer,ContactMessageSerializer, LocationSerializer, DepartmentSerializer,   JobApplicationSerializer, JobApplication
 
 class JobOpeningListAPIView(APIView):
     def get(self, request):
@@ -43,3 +44,25 @@ class ContactMessageCreateAPIView(CreateAPIView):
             {"message": "Your message has been sent successfully."},
             status=status.HTTP_201_CREATED
         )
+
+
+class JobApplicationCreateAPIView(CreateAPIView):
+    queryset = JobApplication.objects.all()
+    serializer_class = JobApplicationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {"message": "Your application has been submitted successfully."},
+            status=status.HTTP_201_CREATED
+        )
+    
+class DepartmentListAPIView(ListAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+
+class LocationListAPIView(ListAPIView):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer

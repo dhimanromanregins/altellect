@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Department, JobOpening, JobDetail,ContactMessage
+from .models import Location, Department, JobOpening, JobDetail,ContactMessage,JobApplication
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -57,3 +57,27 @@ class ContactMessageSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
+
+
+class JobApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobApplication
+        fields = [
+            "id",
+            "job",
+            "full_name",
+            "email",
+            "phone_number",
+            "resume",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+
+    def validate_resume(self, file):
+        allowed_types = ["application/pdf", "application/msword",
+                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+        if file.content_type not in allowed_types:
+            raise serializers.ValidationError("Only PDF or Word documents are allowed.")
+        if file.size > 2 * 1024 * 1024:
+            raise serializers.ValidationError("Resume size must be under 2MB.")
+        return file

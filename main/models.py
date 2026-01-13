@@ -72,3 +72,26 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+    
+
+class JobApplication(models.Model):
+    job = models.ForeignKey(
+        "JobOpening",
+        on_delete=models.CASCADE,
+        related_name="applications"
+    )
+
+    full_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=15)
+
+    resume = models.FileField(upload_to="resumes/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        unique_together = ("job", "email")  # prevent duplicate applies
+
+    def __str__(self):
+        return f"{self.full_name} - {self.job.title}"
