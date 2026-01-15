@@ -91,7 +91,7 @@ class JobApplication(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-        unique_together = ("job", "email")  # prevent duplicate applies
+        unique_together = ("job", "email")
 
     def __str__(self):
         return f"{self.full_name} - {self.job.title}"
